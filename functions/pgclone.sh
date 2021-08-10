@@ -87,7 +87,7 @@ EOF
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-😂 What a Lame TeamDrive Name: $name
+Here is your team drive name: $name
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
@@ -494,9 +494,9 @@ blitzsalt() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Please set a Secondary Password (SALT) for Encryption! Do not forget it!
-If you do, you will be locked out from all your data!  SALT randomizes
+If you do, you will be locked out from all your data! SALT randomizes
 your data to further protect you! It is not recommended to use the same
-password, but may.
+password, but you may.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [Z] Exit

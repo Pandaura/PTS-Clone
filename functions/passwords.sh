@@ -6,12 +6,12 @@
 # GNU:        General Public License v3.0
 ################################################################################
 blitzpasswordmain() {
-  pgclonevars
-
-  clonepassword57=$(cat /var/plexguide/pgclone.password)
-  clonesalt57=$(cat /var/plexguide/pgclone.salt)
-
-  if [[ "$pstatus" != "NOT-SET" ]]; then
+    pgclonevars
+    
+    clonepassword57=$(cat /var/plexguide/pgclone.password)
+    clonesalt57=$(cat /var/plexguide/pgclone.salt)
+    
+    if [[ "$pstatus" != "NOT-SET" ]]; then
     tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -35,27 +35,27 @@ WARNING: Changing the values will RESET & DELETE the following:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-    read -p '↘️  Input Value | Press [Enter]: ' typed </dev/tty
-    case $typed in
-    2)
-      rm -rf /var/plexguide/pgclone.password 1>/dev/null 2>&1
-      rm -rf /var/plexguide/pgclone.salt 1>/dev/null 2>&1
-
-      rm -rf /opt/appdata/plexguide/.gcrypt 1>/dev/null 2>&1
-      rm -rf /opt/appdata/plexguide/.gdrive 1>/dev/null 2>&1
-      rm -rf /opt/appdata/plexguide/.tcrypt 1>/dev/null 2>&1
-      rm -rf /opt/appdata/plexguide/.tdrive 1>/dev/null 2>&1
-      rm -rf /var/plexguide/pgclone.teamdrive 1>/dev/null 2>&1
-      ;;
-    1)
-      clonestart
-      ;;
-    *)
-      blitzpasswordmain
-      ;;
-    esac
-  fi
-
+        read -p '↘️  Input Value | Press [Enter]: ' typed </dev/tty
+        case $typed in
+            2)
+                rm -rf /var/plexguide/pgclone.password 1>/dev/null 2>&1
+                rm -rf /var/plexguide/pgclone.salt 1>/dev/null 2>&1
+                
+                rm -rf /opt/appdata/plexguide/.gcrypt 1>/dev/null 2>&1
+                rm -rf /opt/appdata/plexguide/.gdrive 1>/dev/null 2>&1
+                rm -rf /opt/appdata/plexguide/.tcrypt 1>/dev/null 2>&1
+                rm -rf /opt/appdata/plexguide/.tdrive 1>/dev/null 2>&1
+                rm -rf /var/plexguide/pgclone.teamdrive 1>/dev/null 2>&1
+            ;;
+            1)
+                clonestart
+            ;;
+            *)
+                blitzpasswordmain
+            ;;
+        esac
+    fi
+    
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -70,12 +70,12 @@ risk of encryption; forgetfulness will cost you!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  read -p '↘️  Type Main Password | Press [ENTER]: ' typed </dev/tty
-
-  if [[ "$typed" == "exit" || "$typed" == "Exit" || "$typed" == "EXIT" || "$typed" == "z" || "$typed" == "Z" ]]; then clonestart; fi
-  if [[ "$typed" == "" ]]; then blitzpasswordmain; fi
-  primarypassword=$typed
-  blitzpasswordsalt
+    read -p '↘️  Type Main Password | Press [ENTER]: ' typed </dev/tty
+    
+    if [[ "${typed}" == "exit" || "${typed}" == "z" ]]; then clonestart; fi
+    if [[ "$typed" == "" ]]; then blitzpasswordmain; fi
+    primarypassword=$typed
+    blitzpasswordsalt
 }
 
 blitzpasswordsalt() {
@@ -96,14 +96,14 @@ risk of encryption; forgetfulness will cost you!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  read -p '↘️  Type SALT Password | Press [ENTER]: ' typed </dev/tty
-
-  if [[ "$typed" == "exit" || "$typed" == "Exit" || "$typed" == "EXIT" || "$typed" == "z" || "$typed" == "Z" ]]; then clonestart; fi
-  if [[ "$typed" == "" ]]; then blitzpasswordsalt; fi
-
-  secondarypassword=$typed
-  blitzpasswordfinal
-
+    read -p '↘️  Type SALT Password | Press [ENTER]: ' typed </dev/tty
+    
+    if [[ "${typed}" == "exit" || "${typed}" == "z" ]]; then clonestart; fi
+    if [[ "$typed" == "" ]]; then blitzpasswordsalt; fi
+    
+    secondarypassword=$typed
+    blitzpasswordfinal
+    
 }
 
 blitzpasswordfinal() {
@@ -122,16 +122,16 @@ SALT   : $secondarypassword
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-
-  read -p '↘️  Type y or n | Press [ENTER]: ' typed </dev/tty
-
-  if [[ "$typed" == "n" ]]; then
-    blitzpasswordmain
-  elif [[ "$typed" == "y" ]]; then
-    echo $primarypassword >/var/plexguide/pgclone.password
-    echo $secondarypassword >/var/plexguide/pgclone.salt
-  else blitzpasswordfinal; fi
-
+    
+    read -p '↘️  Type y or n | Press [ENTER]: ' typed </dev/tty
+    
+    if [[ "$typed" == "n" ]]; then
+        blitzpasswordmain
+        elif [[ "$typed" == "y" ]]; then
+        echo $primarypassword >/var/plexguide/pgclone.password
+        echo $secondarypassword >/var/plexguide/pgclone.salt
+else blitzpasswordfinal; fi
+    
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -146,15 +146,15 @@ order to read the data!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  read -p '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
-  clonestart
+    read -p '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
+    clonestart
 }
 
 passwordcheck() {
-  pgclonevars
-
-  if [[ "$pstatus" == "NOT-SET" ]]; then
-
+    pgclonevars
+    
+    if [[ "$pstatus" == "NOT-SET" ]]; then
+        
     tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -169,7 +169,7 @@ to encrypt your data!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-    read -p '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
-    clonestart
-  fi
+        read -p '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
+        clonestart
+    fi
 }

@@ -5,10 +5,11 @@
 # URL:        https://pgblitz.com - http://github.pgblitz.com
 # GNU:        General Public License v3.0
 ################################################################################
+bind '"\C-m": "\C-l\C-j"'
 rcstored="$(rclone --version | awk '{print $2}' | tail -n 3 | head -n 1 )"
 mgstored="$(mergerfs -v | grep 'mergerfs version:' | awk '{print $3}')"
 sudocheck() {
-  if [[ $EUID -ne 0 ]]; then
+    if [[ $EUID -ne 0 ]]; then
     tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -16,13 +17,13 @@ sudocheck() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-    exit 0
-  fi
+        exit 0
+    fi
 }
 clonestartoutput() {
     pgclonevars
-echo "ACTIVELY DEPLOYED: 	  $dversionoutput "
-echo ""
+    echo "ACTIVELY DEPLOYED: 	  $dversionoutput "
+    echo ""
     if [[ "$demo" == "ON " ]]; then mainid="********"; else mainid="$pgcloneemail"; fi
     if [[ "$transport" == "mu" ]]; then
         tee <<-EOF
@@ -32,7 +33,7 @@ echo ""
 [2] GDrive                   [ $gstatus ]
 
 EOF
-    elif [[ "$transport" == "me" ]]; then
+        elif [[ "$transport" == "me" ]]; then
         tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -41,7 +42,7 @@ EOF
 [3] GDrive                   [ $gstatus ] - [ $gcstatus ]
 
 EOF
-    elif [[ "$transport" == "bu" ]]; then
+        elif [[ "$transport" == "bu" ]]; then
         tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -50,11 +51,11 @@ EOF
 [3] Client ID & Secret       [ ${pgcloneid} ]
 [4] TDrive Label             [ $tdname ]
 [5] TDrive OAuth             [ $tstatus ]
-[6] GDrive OAuth             [ $gstatus ] 
+[6] GDrive OAuth             [ $gstatus ]
 [7] Key Management           [ $displaykey ] Built
 [8] TDrive	             ( E-Mail Share Generator )
 EOF
-    elif [[ "$transport" == "be" ]]; then
+        elif [[ "$transport" == "be" ]]; then
         tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -69,7 +70,7 @@ EOF
 [9] TDrive	             ( E-Mail Share Generator )
 
 EOF
-    elif [[ "$transport" == "le" ]]; then
+        elif [[ "$transport" == "le" ]]; then
         tee <<-EOF
 NOTE: The default drive is already factored in! Only additional locations
 or hard drives are required to be added!
@@ -111,17 +112,17 @@ clonestart() {
     fi
     if [[ "$transport" == "mu" ]]; then
         outputversion="Unencrypted Mounts"
-		output="Gdrive"
-    elif [[ "$transport" == "me" ]]; then
+        output="Gdrive"
+        elif [[ "$transport" == "me" ]]; then
         outputversion="Encrypted Mounts"
-		output="Gcrypt"
-    elif [[ "$transport" == "bu" ]]; then
+        output="Gcrypt"
+        elif [[ "$transport" == "bu" ]]; then
         outputversion="Unencrypted Mounts"
-		output="TDrive"
-    elif [[ "$transport" == "be" ]]; then
+        output="TDrive"
+        elif [[ "$transport" == "be" ]]; then
         outputversion="Encrypted Mounts"
-		output="Tcrypt"
-    elif [[ "$transport" == "le" ]]; then
+        output="Tcrypt"
+        elif [[ "$transport" == "le" ]]; then
         outputversion="Local Hard Drives"
     fi
     if [[ "$transport" == "le" ]]; then
@@ -156,7 +157,7 @@ EOF
 
 EOF
         clonestartoutput
-		dockerstatus
+        dockerstatus
         tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [A] Deploy Mounts            [ $outputversion ]
@@ -173,99 +174,99 @@ EOF
     fi
 }
 dockerstatus() {
-upper=$(docker ps --format '{{.Names}}' | grep "uploader")
-if [[ "$upper" == "uploader" ]]; then
- dstatus="✅ DEPLOYED"
-  else dstatus="⚠️ NOT DEPLOYED"; fi
+    upper=$(docker ps --format '{{.Names}}' | grep "uploader")
+    if [[ "$upper" == "uploader" ]]; then
+        dstatus="✅ DEPLOYED"
+else dstatus="⚠️ NOT DEPLOYED"; fi
 }
 localstartoutput() {
     case $typed in
-    1) executelocal ;;
-    2) bash /opt/plexguide/menu/multihd/multihd.sh ;;
-    3) transportselect ;;
-    z) exit ;;
-    Z) exit ;;
-    *) clonestart ;;
+        1) executelocal ;;
+        2) bash /opt/plexguide/menu/multihd/multihd.sh ;;
+        3) transportselect ;;
+        z) exit ;;
+        Z) exit ;;
+        *) clonestart ;;
     esac
     clonestart
 }
 clonestartactions() {
     if [[ "$transport" == "mu" ]]; then
         case $typed in
-        1)  keyinputpublic ;;
-        2)  publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        z)  exit ;;
-        Z)  exit ;;
-        a) publicsecretchecker && mountchecker && deploypgmove ;;
-        A) publicsecretchecker && mountchecker && deploypgmove ;;
-        D) publicsecretchecker && deploydockeruploader ;;
-        d) publicsecretchecker && deploydockeruploader ;;
-        o) optionsmenumove ;;
-        O) optionsmenumove ;;
-        *) clonestart ;;
+            1)  keyinputpublic ;;
+            2)  publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
+            z)  exit ;;
+            Z)  exit ;;
+            a) publicsecretchecker && mountchecker && deploypgmove ;;
+            A) publicsecretchecker && mountchecker && deploypgmove ;;
+            D) publicsecretchecker && deploydockeruploader ;;
+            d) publicsecretchecker && deploydockeruploader ;;
+            o) optionsmenumove ;;
+            O) optionsmenumove ;;
+            *) clonestart ;;
         esac
-
-    elif [[ "$transport" == "me" ]]; then
+        
+        elif [[ "$transport" == "me" ]]; then
         case $typed in
-        1) keyinputpublic ;;
-        2) publicsecretchecker && blitzpasswordmain ;;
-        3) publicsecretchecker && passwordcheck && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        z) exit ;;
-        Z) exit ;;
-        a) publicsecretchecker && passwordcheck && mountchecker && deploypgmove ;;
-        A) publicsecretchecker && passwordcheck && mountchecker && deploypgmove ;;
-        D) publicsecretchecker && passwordcheck && deploydockeruploader ;;
-        d) publicsecretchecker && passwordcheck && deploydockeruploader ;;
-        o) optionsmenumove ;;
-        O) optionsmenumove ;;
-        *) clonestart ;;
+            1) keyinputpublic ;;
+            2) publicsecretchecker && blitzpasswordmain ;;
+            3) publicsecretchecker && passwordcheck && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
+            z) exit ;;
+            Z) exit ;;
+            a) publicsecretchecker && passwordcheck && mountchecker && deploypgmove ;;
+            A) publicsecretchecker && passwordcheck && mountchecker && deploypgmove ;;
+            D) publicsecretchecker && passwordcheck && deploydockeruploader ;;
+            d) publicsecretchecker && passwordcheck && deploydockeruploader ;;
+            o) optionsmenumove ;;
+            O) optionsmenumove ;;
+            *) clonestart ;;
         esac
-
-    elif [[ "$transport" == "bu" ]]; then
+        
+        elif [[ "$transport" == "bu" ]]; then
         case $typed in
-        1) glogin ;;
-        2) exisitingproject ;;
-        3) keyinputpublic ;;
-        4) publicsecretchecker && tlabeloauth ;;
-        5) publicsecretchecker && tlabelchecker && echo "tdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        6) publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        7) publicsecretchecker && tlabelchecker && mountchecker && projectnamecheck && keystart && gdsaemail ;;
-        8) publicsecretchecker && tlabelchecker && mountchecker && projectnamecheck && deployblitzstartcheck && emailgen ;;
-        z) exit ;;
-        Z) exit ;;
-        a) publicsecretchecker && tlabelchecker && mountchecker && deploypgblitz ;;
-        A) publicsecretchecker && tlabelchecker && mountchecker && deploypgblitz ;;
-        D) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
-        d) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
-        b) publicsecretchecker && mountchecker && keybackup ;;
-        B) publicsecretchecker && mountchecker && keybackup ;;
-        o) optionsmenu ;;
-        O) optionsmenu ;;
-        *) clonestart ;;
+            1) glogin ;;
+            2) exisitingproject ;;
+            3) keyinputpublic ;;
+            4) publicsecretchecker && tlabeloauth ;;
+            5) publicsecretchecker && tlabelchecker && echo "tdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
+            6) publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
+            7) publicsecretchecker && tlabelchecker && mountchecker && projectnamecheck && keystart && gdsaemail ;;
+            8) publicsecretchecker && tlabelchecker && mountchecker && projectnamecheck && deployblitzstartcheck && emailgen ;;
+            z) exit ;;
+            Z) exit ;;
+            a) publicsecretchecker && tlabelchecker && mountchecker && deploypgblitz ;;
+            A) publicsecretchecker && tlabelchecker && mountchecker && deploypgblitz ;;
+            D) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
+            d) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
+            b) publicsecretchecker && mountchecker && keybackup ;;
+            B) publicsecretchecker && mountchecker && keybackup ;;
+            o) optionsmenu ;;
+            O) optionsmenu ;;
+            *) clonestart ;;
         esac
-
-    elif [[ "$transport" == "be" ]]; then
+        
+        elif [[ "$transport" == "be" ]]; then
         case $typed in
-        1) glogin ;;
-        2) exisitingproject ;;
-        3) keyinputpublic ;;
-        4) publicsecretchecker && blitzpasswordmain ;;
-        5) publicsecretchecker && tlabeloauth ;;
-        6) publicsecretchecker && passwordcheck && tlabelchecker && echo "tdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        7) publicsecretchecker && passwordcheck && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        8) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && projectnamecheck && keystart && gdsaemail ;;
-        9) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && projectnamecheck && deployblitzstartcheck && emailgen ;;
-        z) exit ;;
-        Z) exit ;;
-        a) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && deploypgblitz ;;
-        A) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && deploypgblitz ;;
-        D) publicsecretchecker && passwordcheck && tlabelchecker && deploydockeruploader ;;
-        d) publicsecretchecker && passwordcheck && tlabelchecker && deploydockeruploader ;;
-        b) publicsecretchecker && passwordcheck && mountchecker && keybackup ;;
-        B) publicsecretchecker && passwordcheck && mountchecker && keybackup ;;
-        o) optionsmenu ;;
-        O) optionsmenu ;;
-        *) clonestart ;;
+            1) glogin ;;
+            2) exisitingproject ;;
+            3) keyinputpublic ;;
+            4) publicsecretchecker && blitzpasswordmain ;;
+            5) publicsecretchecker && tlabeloauth ;;
+            6) publicsecretchecker && passwordcheck && tlabelchecker && echo "tdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
+            7) publicsecretchecker && passwordcheck && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
+            8) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && projectnamecheck && keystart && gdsaemail ;;
+            9) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && projectnamecheck && deployblitzstartcheck && emailgen ;;
+            z) exit ;;
+            Z) exit ;;
+            a) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && deploypgblitz ;;
+            A) publicsecretchecker && passwordcheck && tlabelchecker && mountchecker && deploypgblitz ;;
+            D) publicsecretchecker && passwordcheck && tlabelchecker && deploydockeruploader ;;
+            d) publicsecretchecker && passwordcheck && tlabelchecker && deploydockeruploader ;;
+            b) publicsecretchecker && passwordcheck && mountchecker && keybackup ;;
+            B) publicsecretchecker && passwordcheck && mountchecker && keybackup ;;
+            o) optionsmenu ;;
+            O) optionsmenu ;;
+            *) clonestart ;;
         esac
     fi
     clonestart
@@ -298,18 +299,18 @@ project and enabling the API! Everything resets when complete!
 
 EOF
     read -rp '↘️  Input Selection | Press [ENTER]: ' typed </dev/tty
-
+    
     case $typed in
-    1)  transportselect && clonestart ;;
-    2)  bash /opt/plexguide/menu/multihd/multihd.sh ;;
-    3)  deletekeys ;;
-    4)  projectnameset ;;
-    5)  demomode ;;
-    6)  changeCloneCleanInterval ;;
-    7)  ctdrive ;;
-    Z)  clonestart ;;
-    z)  clonestart ;;
-    *)  optionsmenu ;;
+        1)  transportselect && clonestart ;;
+        2)  bash /opt/plexguide/menu/multihd/multihd.sh ;;
+        3)  deletekeys ;;
+        4)  projectnameset ;;
+        5)  demomode ;;
+        6)  changeCloneCleanInterval ;;
+        7)  ctdrive ;;
+        Z)  clonestart ;;
+        z)  clonestart ;;
+        *)  optionsmenu ;;
     esac
     optionsmenu
 }
@@ -336,22 +337,22 @@ project and enabling the API! Everything resets when complete!
 
 EOF
     read -rp '↘️  Input Selection | Press [ENTER]: ' typed </dev/tty
-
+    
     case $typed in
-    1) transportselect && clonestart ;;
-    2) bash /opt/plexguide/menu/multihd/multihd.sh ;;
-    3) changeCloneCleanInterval ;;
-    Z) clonestart ;;
-    z) clonestart ;;
-    *) optionsmenu ;;
+        1) transportselect && clonestart ;;
+        2) bash /opt/plexguide/menu/multihd/multihd.sh ;;
+        3) changeCloneCleanInterval ;;
+        Z) clonestart ;;
+        z) clonestart ;;
+        *) optionsmenu ;;
     esac
     optionsmenu
 }
 demomode() {
     if [[ "$demo" == "OFF" ]]; then
         echo "ON " >/var/plexguide/pgclone.demo
-    else echo "OFF" >/var/plexguide/pgclone.demo; fi
-
+else echo "OFF" >/var/plexguide/pgclone.demo; fi
+    
     pgclonevars
     tee <<-EOF
 
