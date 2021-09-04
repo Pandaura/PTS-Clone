@@ -24,12 +24,11 @@
       - { name: plexdrive.service }
       - { name: st2monitor.service }
       - { name: pgunion.service }
-      - { name: cloneclean.service }
+      - { name: localspace.service }
+      - { name: mountcheck.servive }
+      - { name: cloneclean.servive }
 
   tasks:
-    - name: Stop All Docker Containers
-      shell: docker stop $(docker ps -a -q)
-
     - name: Get existing services
       stat:
         path: "/etc/systemd/system/{{ item.name }}"
@@ -50,3 +49,15 @@
         state: absent
       with_items: "{{ check_service_name.results }}"
       when: item.stat.exists
+
+    - name: Remove old folders
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /mnt/move
+        - /mnt/tdrive
+        - /mnt/gdrive
+        - /mnt/gcrypt
+        - /mnt/tcrypt
+        - /mnt/encrypt
