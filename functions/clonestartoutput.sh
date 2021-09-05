@@ -99,6 +99,7 @@ clonestart() {
         outputversion="Encrypted Mounts"
         output="TCrypt"
     fi
+        clear
         tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

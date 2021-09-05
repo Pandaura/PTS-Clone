@@ -196,7 +196,7 @@ EOF
     vnstat
     norcloneconf
     removeoldui
-    vault
+    # vault
     cleanlogs
     stopmounts
     mover
