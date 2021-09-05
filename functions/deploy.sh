@@ -45,12 +45,12 @@ dovolcheck=$(docker volume ls | grep unionfs)
 if [[ "$dovolcheck" == "unionfs" ]]; then
 clear
 tee <<-EOF
-     🛈      Docker Volume exists, skipping
+🛈      Docker Volume exists, skipping
 EOF
 else
 clear
 tee <<-EOF
-     🛈      Creating the docker volume.
+🛈      Creating the docker volume.
              Please be patient as this
              can take a long time.
 EOF
@@ -58,20 +58,20 @@ curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/s
 docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 1>/dev/null 2>&1
 clear
 tee <<-EOF
-     🛈      The Docker Volume has been created.
+🛈      The Docker Volume has been created.
 EOF
 fi
 }
 
 updatesystem() {
 tee <<-EOF
-     🛈      System will be updated now 
+🛈      System will be updated now 
 	     this can take a long time  
 EOF
   # update system to new packages
    ansible-playbook /opt/pgclone/ymls/update.yml 1>/dev/null 2>&1
 tee <<-EOF
-     🛈      System is up2date now
+🛈      System is up2date now
 EOF
 }
 
@@ -145,13 +145,13 @@ vault() {
 deploydockermount() {
 clear
 tee <<-EOF
-     🛈      Deploy of Docker Mounts started
+🛈      Deploy of Docker Mounts started
 EOF
    ansible-playbook /opt/pgclone/ymls/remove-2.yml 1>/dev/null 2>&1
    ansible-playbook /opt/pgclone/ymls/mounts.yml 1>/dev/null 2>&1
 clear
 tee <<-EOF
-     🛈      Deploy of Docker Mounts done
+🛈      Deploy of Docker Mounts done
 EOF
 }
 
@@ -189,7 +189,7 @@ deploydrives() {
 clear
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-      🛈 Conducting RClone Mount Checks
+ 🛈 Conducting RClone Mount Checks
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
     stopdocker
