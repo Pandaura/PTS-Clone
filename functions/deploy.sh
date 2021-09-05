@@ -24,6 +24,7 @@ deploypgblitz() {
   cat /opt/appdata/plexguide/.keys >>/opt/appdata/plexguide/rclone.conf
   deploydrives
 }
+
 deploypgmove() {
   # RCLONE BUILD
   echo "#------------------------------------------" >/opt/appdata/plexguide/rclone.conf
@@ -39,24 +40,29 @@ deploypgmove() {
   deploydrives
 }
 
-dockervolumen() {
+dockervolume() {
 dovolcheck=$(docker volume ls | grep unionfs)
 if [[ "$dovolcheck" == "unionfs" ]]; then
+clear
 tee <<-EOF
-     🛈      Docker Volume exist | skipping
+     🛈      Docker Volume exists, skipping
 EOF
 else
+clear
 tee <<-EOF
-     🛈      Creating Docker Volume starting
-     🛈      this can take a long time  
+     🛈      Creating the docker volume.
+             Please be patient as this
+             can take a long time.
 EOF
 curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
 docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 1>/dev/null 2>&1
+clear
 tee <<-EOF
-     🛈      Creating Docker Volume created
+     🛈      The Docker Volume has been created.
 EOF
 fi
 }
+
 updatesystem() {
 tee <<-EOF
      🛈      System will be updated now 
@@ -68,7 +74,8 @@ tee <<-EOF
      🛈      System is up2date now
 EOF
 }
-stopmunts() {
+
+stopmounts() {
 mount=$(docker ps --format '{{.Names}}' | grep "mount")
 if [[ "$mount" == "mount" ]]; then 
    docker stop mount 1>/dev/null 2>&1
@@ -79,6 +86,7 @@ else
    rm -f /etc/systemd/system/pgunion.service 1>/dev/null 2>&1
 fi
 }
+
 removeoldui() {
 UI=$(docker ps --format '{{.Names}}' | grep "pgui")
 if [[ "$UI" == "pgui" ]]; then 
@@ -87,13 +95,16 @@ if [[ "$UI" == "pgui" ]]; then
    rm -rf /opt/appdata/pgui/ 1>/dev/null 2>&1
 fi
 }
+
 update_pip() {
 pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U 1>/dev/null 2>&1
 }
+
 stopdocker() {
   container=$(docker ps -aq --format '{{.Names}}' | sed '/^$/d' | grep -E 'ple|arr|emby|jelly')
   docker stop $container 1>/dev/null 2>&1
 }
+
 vnstat() {
   apt-get install ethtool vnstat vnstati -yqq 2>&1 >>/dev/null
      export DEBIAN_FRONTEND=noninteractive
@@ -105,6 +116,7 @@ vnstat() {
      sed -i 's/Locale "-"/Locale "LC_ALL=en_US.UTF-8"/g' /etc/vnstat.conf
      /etc/init.d/vnstat restart 1>/dev/null 2>&1
 }
+
 mover() {
 hdpath="$(cat /var/plexguide/server.hd.path)"
 if [[ -d "$hdpath/move" ]]; then
@@ -120,36 +132,40 @@ if [[ -d "$hdpath/move" ]]; then
    fi
 fi
 }
+
 vault() {
   rm -rf /opt/pgvault
-  git clone --quiet https://github.com/mrfret/PTS-Vault.git /opt/pgvault
+  git clone --quiet https://github.com/Pandaura/PTS-Vault.git /opt/pgvault
   rm -rf /opt/plexguide/menu/pgvault/pgvault.sh
   mv /opt/pgvault/newpgvault.sh /opt/plexguide/menu/pgcloner/pgvault.sh
   chown -cR 1000:1000 /opt/pgvault/ 1>/dev/null 2>&1
   chmod -cR 755 /opt/pgvault 1>/dev/null 2>&1
 }
+
 deploydockermount() {
+clear
 tee <<-EOF
      🛈      Deploy of Docker Mounts started
 EOF
    ansible-playbook /opt/pgclone/ymls/remove-2.yml 1>/dev/null 2>&1
    ansible-playbook /opt/pgclone/ymls/mounts.yml 1>/dev/null 2>&1
+clear
 tee <<-EOF
      🛈      Deploy of Docker Mounts done
 EOF
 }
+
 norcloneconf() {
 rcc=/opt/appdata/plexguide/rclone.conf
 if [[ ! -f "$rcc" ]]; then
+clear
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    ⛔ Fail Notice for deploy of Docker 
+    ⛔ Failed to deploy 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     Sorry we cant Deploy the Docker.
-     We cant find any rclone.conf file 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    ⛔ Fail Notice for deploy of Docker
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Sorry we can't deploy the mount.
+     the rclone.conf file is missing
+
 EOF
   read -rp '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
 clonestart
@@ -157,17 +173,20 @@ else
   echo ""
 fi
 }
+
 deploydockeruploader() {
 ansible-playbook /opt/pgclone/ymls/uploader.yml 1>/dev/null 2>&1
+clear
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
      💪     DEPLOYED sucessfully !
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
 }
+
 ### Docker Uploader Deploy end ##
 deploydrives() {
+clear
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       🛈 Conducting RClone Mount Checks
@@ -179,14 +198,14 @@ EOF
     removeoldui
     vault
     cleanlogs
-    stopmunts
+    stopmounts
     mover
     testdrive
-    updatesystem
-    update_pip
-    stopmunts
+    # updatesystem
+    # update_pip
+    stopmounts
     unmountdrive
-    dockervolumen
+    dockervolume
     deploydockeruploader	
     deploydockermount
     doneokay
@@ -198,6 +217,7 @@ doneokay() {
  echo
   read -p 'Confirm Info | PRESS [ENTER] ' typed </dev/tty
 }
+
 testdrive() {
 IFS=$'\n'
 filter="$1"
@@ -208,6 +228,7 @@ for i in ${mounttest[@]}; do
     echo "$i = Passed"
 done
 }
+
 unmountdrive() {
 IFS=$'\n'
 filter="$1"
@@ -225,16 +246,15 @@ done
 deployblitzstartcheck() {
   pgclonevars
   if [[ "$displaykey" == "0" ]]; then
+    clear
     tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ⛔ Fail Notice
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  💬  There are [0] keys generated for Blitz! Create those first!
-  NOTE: 
-
-  Without any keys, Blitz cannot upload any data without the use
-  of service accounts
+  💬  There are no GDSA keys generated for Blitz. 
+  
+  💬  Please Create those first.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
