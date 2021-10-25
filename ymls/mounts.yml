@@ -16,7 +16,7 @@
         pgrole: "mount"
         intport: "8080"
         extport: "7755"
-        image: "hawkinzzz/mount:panda"
+        image: "hawkinzzz/mount:latest"
 
     - name: "Remove mount Container"
       docker_container:
